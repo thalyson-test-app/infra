@@ -1,5 +1,17 @@
 routes:
   -
+    id: auth
+    uri: /auth
+    methods: ["POST"]
+    plugins:
+      proxy-rewrite:
+        uri: "/realms/test-app/protocol/openid-connect/token"
+        host: "auth-server:8080"
+    upstream:
+      nodes:
+        "auth-server:8080": 1
+      type: roundrobin
+  -
     id: httpbin
     uri: /*
     upstream:
@@ -7,6 +19,7 @@ routes:
         "httpbin.org": 1
       type: roundrobin
     plugin_config_id: 1
+  
 
 plugin_configs:
   -
@@ -19,7 +32,5 @@ plugin_configs:
         scope: "openid profile"
         bearer_only: true
         realm: "test-app"
-        redirect_uri: "http://apisix.local:9080/anything/callback"
-        logout_path: "/anything/logout"
     desc: "keycloak auth"
 #END
