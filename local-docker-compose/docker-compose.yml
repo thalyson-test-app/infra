@@ -1,40 +1,17 @@
 version: '3.8'
 services:
-  apisix-dashboard:
-    image: apache/apisix-dashboard:3.0.0-alpine
-    restart: always
-    volumes:
-    - ./dashboard_conf/conf.yaml:/usr/local/apisix-dashboard/conf/conf.yaml:ro
-    ports:
-    - "9000:9000"
-
   apisix:
-    image: apache/apisix:${APISIX_IMAGE_TAG:-3.2.0-debian}
+    image: apache/apisix:${APISIX_IMAGE_TAG:-3.1.0-debian}
     restart: always
     volumes:
       - ./apisix_conf/config.yaml:/usr/local/apisix/conf/config.yaml:ro
-    depends_on:
-      - etcd
-    ##network_mode: host
+      - ./apisix_conf/apisix.yaml:/usr/local/apisix/conf/apisix.yaml:ro
     ports:
       - "9180:9180/tcp"
       - "9080:9080/tcp"
       - "9091:9091/tcp"
       - "9443:9443/tcp"
       - "9092:9092/tcp"
-
-  etcd:
-    image: bitnami/etcd:3.4.15
-    restart: always
-    # volumes:
-    #   - ./etcd/:/bitnami/etcd:rw
-    environment:
-      ETCD_ENABLE_V2: "true"
-      ALLOW_NONE_AUTHENTICATION: "yes"
-      ETCD_ADVERTISE_CLIENT_URLS: "http://etcd:2379"
-      ETCD_LISTEN_CLIENT_URLS: "http://0.0.0.0:2379"
-    ports:
-      - "2379:2379/tcp"
 
   prometheus:
     image: prom/prometheus:v2.25.0
@@ -44,15 +21,15 @@ services:
     ports:
       - "9090:9090"
 
-  grafana:
-    image: grafana/grafana:7.3.7
-    restart: always
-    ports:
-      - "3000:3000"
-    volumes:
-      - "./grafana_conf/provisioning:/etc/grafana/provisioning"
-      - "./grafana_conf/dashboards:/var/lib/grafana/dashboards"
-      - "./grafana_conf/config/grafana.ini:/etc/grafana/grafana.ini"
+  # grafana:
+  #   image: grafana/grafana:7.3.7
+  #   restart: always
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - "./grafana_conf/provisioning:/etc/grafana/provisioning"
+  #     - "./grafana_conf/dashboards:/var/lib/grafana/dashboards"
+  #     - "./grafana_conf/config/grafana.ini:/etc/grafana/grafana.ini"
 
   auth-server:
     image: quay.io/keycloak/keycloak:21.0.1

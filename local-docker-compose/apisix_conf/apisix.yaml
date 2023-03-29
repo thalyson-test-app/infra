@@ -1,0 +1,25 @@
+routes:
+  -
+    id: httpbin
+    uri: /*
+    upstream:
+      nodes:
+        "httpbin.org": 1
+      type: roundrobin
+    plugin_config_id: 1
+
+plugin_configs:
+  -
+    id: 1
+    plugins:
+      openid-connect:
+        client_id: "myclient"
+        client_secret: "e91CKZQwhxyDqpkP0YFUJBxiXJ0ikJhq"
+        discovery: "http://auth-server:8080/realms/myrealm/.well-known/openid-configuration"
+        scope: "openid profile"
+        bearer_only: true
+        realm: "myrealm"
+        redirect_uri: "http://apisix:9080/anything/callback"
+        logout_path: "/anything/logout"
+    desc: "keycloak auth"
+#END
