@@ -833,43 +833,6 @@
           }
         ],
         "policies": [
-          {
-            "id": "29da3882-9969-4d0f-9167-aa42bba2524e",
-            "name": "Default Policy",
-            "description": "A policy that grants access only for users within this realm",
-            "type": "js",
-            "logic": "POSITIVE",
-            "decisionStrategy": "AFFIRMATIVE",
-            "config": {
-              "code": "// by default, grants any permission associated with this policy\n$evaluation.grant();\n"
-            }
-          },
-          {
-            "id": "e1323085-363b-4e94-82d5-e62560b2c0f5",
-            "name": "Default Permission",
-            "description": "A permission that applies to the default resource type",
-            "type": "resource",
-            "logic": "POSITIVE",
-            "decisionStrategy": "UNANIMOUS",
-            "config": {
-              "defaultResourceType": "urn:apisix:resources:default",
-              "applyPolicies": "[\"Default Policy\"]"
-            }
-          },
-          {
-            "id": "6e274718-491e-4f0c-a138-37506a977965",
-            "name": "delete default",
-            "description": "",
-            "type": "scope",
-            "logic": "POSITIVE",
-            "decisionStrategy": "UNANIMOUS",
-            "config": {
-              "defaultResourceType": "",
-              "resources": "[\"facebook\"]",
-              "scopes": "[\"delete\"]",
-              "applyPolicies": "[\"Default Policy\"]"
-            }
-          }
         ],
         "scopes": [
           {
