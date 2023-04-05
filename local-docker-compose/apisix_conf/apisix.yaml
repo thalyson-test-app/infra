@@ -1,6 +1,5 @@
 routes:
-  -
-    id: auth
+  - id: auth
     uri: /auth
     methods: ["POST"]
     plugins:
@@ -11,26 +10,35 @@ routes:
       nodes:
         "auth-server:8080": 1
       type: roundrobin
-  -
-    id: httpbin
-    uri: /*
+  - id: httpbin
+    uri: /anything/test
     upstream:
       nodes:
         "httpbin.org": 1
       type: roundrobin
     plugin_config_id: 1
-  
+  - id: users
+    uri: /*
+    upstream:
+      nodes:
+        "users:3000": 1
+      type: roundrobin
+    plugin_config_id: 1
 
 plugin_configs:
-  -
-    id: 1
+  - id: 1
+    desc: "auth + tracing"
     plugins:
       openid-connect:
         client_id: "apisix"
-        client_secret: "mWME2V9viaXoaTcqqbmXLizaxYaCSQH4"
+        client_secret: "**********"
         discovery: "http://auth-server:8080/realms/test-app/.well-known/openid-configuration"
         scope: "openid profile"
         bearer_only: true
         realm: "test-app"
-    desc: "keycloak auth"
+      zipkin:
+        endpoint: "http://zipkin:9411/api/v2/spans"
+        sample_ratio: 1
+        service_name: "APISIX"
+        server_addr: "192.168.0.1"
 #END
