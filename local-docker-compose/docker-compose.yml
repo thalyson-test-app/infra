@@ -66,9 +66,11 @@ services:
       target: development
     volumes:
       - ../../users:/usr/src/app
+      - ../../proto/users/users.proto:/usr/src/proto/users/users.proto
     # env_file:
     # - .env
     # Run a command against the development stage of the image
     command: pnpm run start:dev
     ports:
       - 3000:3000
+      - 5000:5000

@@ -24,9 +24,37 @@ routes:
         "users:3000": 1
       type: roundrobin
     plugin_config_id: 1
+  - id: users
+    methods: [GET]
+    uri: /users
+    plugins:
+      grpc-transcode:
+        proto_id: "1"
+        service: users.UsersService
+        method: FindAll
+    upstream:
+      scheme: grpc
+      type: roundrobin
+      nodes:
+        "users:5000": 1
+    plugin_config_id: 2
+  - id: users
+    methods: [POST]
+    uri: /users
+    plugins:
+      grpc-transcode:
+        proto_id: "1"
+        service: users.UsersService
+        method: Create
+    upstream:
+      scheme: grpc
+      type: roundrobin
+      nodes:
+        "users:5000": 1
+    plugin_config_id: 2
 
 plugin_configs:
-  - id: 1
+  - id: "1"
     desc: "auth + tracing"
     plugins:
       openid-connect:
@@ -41,4 +69,17 @@ plugin_configs:
         sample_ratio: 1
         service_name: "APISIX"
         server_addr: "192.168.0.1"
+  - id: "2"
+    desc: just tracing
+    plugins:
+      zipkin:
+        endpoint: "http://zipkin:9411/api/v2/spans"
+        sample_ratio: 1
+        service_name: "APISIX"
+        server_addr: "192.168.0.1"
+
+protos:
+  - id: "1"
+    desc: users
+    content: Cv4DCh5nb29nbGUvcHJvdG9idWYvd3JhcHBlcnMucHJvdG8SD2dvb2dsZS5wcm90b2J1ZiIjCgtEb3VibGVWYWx1ZRIUCgV2YWx1ZRgBIAEoAVIFdmFsdWUiIgoKRmxvYXRWYWx1ZRIUCgV2YWx1ZRgBIAEoAlIFdmFsdWUiIgoKSW50NjRWYWx1ZRIUCgV2YWx1ZRgBIAEoA1IFdmFsdWUiIwoLVUludDY0VmFsdWUSFAoFdmFsdWUYASABKARSBXZhbHVlIiIKCkludDMyVmFsdWUSFAoFdmFsdWUYASABKAVSBXZhbHVlIiMKC1VJbnQzMlZhbHVlEhQKBXZhbHVlGAEgASgNUgV2YWx1ZSIhCglCb29sVmFsdWUSFAoFdmFsdWUYASABKAhSBXZhbHVlIiMKC1N0cmluZ1ZhbHVlEhQKBXZhbHVlGAEgASgJUgV2YWx1ZSIiCgpCeXRlc1ZhbHVlEhQKBXZhbHVlGAEgASgMUgV2YWx1ZUJ8ChNjb20uZ29vZ2xlLnByb3RvYnVmQg1XcmFwcGVyc1Byb3RvUAFaKmdpdGh1Yi5jb20vZ29sYW5nL3Byb3RvYnVmL3B0eXBlcy93cmFwcGVyc/gBAaICA0dQQqoCHkdvb2dsZS5Qcm90b2J1Zi5XZWxsS25vd25UeXBlc2IGcHJvdG8zCrcBChtnb29nbGUvcHJvdG9idWYvZW1wdHkucHJvdG8SD2dvb2dsZS5wcm90b2J1ZiIHCgVFbXB0eUJ2ChNjb20uZ29vZ2xlLnByb3RvYnVmQgpFbXB0eVByb3RvUAFaJ2dpdGh1Yi5jb20vZ29sYW5nL3Byb3RvYnVmL3B0eXBlcy9lbXB0efgBAaICA0dQQqoCHkdvb2dsZS5Qcm90b2J1Zi5XZWxsS25vd25UeXBlc2IGcHJvdG8zCrEECgt1c2Vycy5wcm90bxIFdXNlcnMaHmdvb2dsZS9wcm90b2J1Zi93cmFwcGVycy5wcm90bxobZ29vZ2xlL3Byb3RvYnVmL2VtcHR5LnByb3RvIkAKBFVzZXISDgoCaWQYASABKAlSAmlkEhIKBG5hbWUYAiABKAlSBG5hbWUSFAoFZW1haWwYAyABKAlSBWVtYWlsIioKBVVzZXJzEiEKBXVzZXJzGAEgAygLMgsudXNlcnMuVXNlclIFdXNlcnMiNgoKQ3JlYXRlVXNlchISCgRuYW1lGAEgASgJUgRuYW1lEhQKBWVtYWlsGAIgASgJUgVlbWFpbDKvAgoMVXNlcnNTZXJ2aWNlEjsKBkNyZWF0ZRIRLnVzZXJzLkNyZWF0ZVVzZXIaHC5nb29nbGUucHJvdG9idWYuU3RyaW5nVmFsdWUiABI2CgdGaW5kT25lEhwuZ29vZ2xlLnByb3RvYnVmLlN0cmluZ1ZhbHVlGgsudXNlcnMuVXNlciIAEjEKB0ZpbmRBbGwSFi5nb29nbGUucHJvdG9idWYuRW1wdHkaDC51c2Vycy5Vc2VycyIAEjUKBlVwZGF0ZRIcLmdvb2dsZS5wcm90b2J1Zi5TdHJpbmdWYWx1ZRoLLnVzZXJzLlVzZXIiABJACgZEZWxldGUSHC5nb29nbGUucHJvdG9idWYuU3RyaW5nVmFsdWUaFi5nb29nbGUucHJvdG9idWYuRW1wdHkiAGIGcHJvdG8z
 #END
