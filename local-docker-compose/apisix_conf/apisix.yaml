@@ -16,14 +16,13 @@ routes:
       nodes:
         "httpbin.org": 1
       type: roundrobin
-    plugin_config_id: 1
-  - id: users
-    uri: /*
-    upstream:
-      nodes:
-        "users:3000": 1
-      type: roundrobin
-    plugin_config_id: 1
+  # - id: users
+  #   uri: /*
+  #   upstream:
+  #     nodes:
+  #       "users:3000": 1
+  #     type: roundrobin
+  #   plugin_config_id: 1
   - id: users
     methods: [GET]
     uri: /users
@@ -32,12 +31,14 @@ routes:
         proto_id: "1"
         service: users.UsersService
         method: FindAll
+      opentelemetry:
+        sampler:
+          name: always_on
     upstream:
       scheme: grpc
       type: roundrobin
       nodes:
         "users:5000": 1
-    plugin_config_id: 2
   - id: users
     methods: [POST]
     uri: /users
@@ -46,12 +47,14 @@ routes:
         proto_id: "1"
         service: users.UsersService
         method: Create
+      opentelemetry:
+        sampler:
+          name: always_on
     upstream:
       scheme: grpc
       type: roundrobin
       nodes:
         "users:5000": 1
-    plugin_config_id: 2
 
 plugin_configs:
   - id: "1"
@@ -64,14 +67,6 @@ plugin_configs:
         scope: "openid profile"
         bearer_only: true
         realm: "test-app"
-      zipkin:
-        endpoint: "http://zipkin:9411/api/v2/spans"
-        sample_ratio: 1
-        service_name: "APISIX"
-        server_addr: "192.168.0.1"
-  - id: "2"
-    desc: just tracing
-    plugins:
       zipkin:
         endpoint: "http://zipkin:9411/api/v2/spans"
         sample_ratio: 1

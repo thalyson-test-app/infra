@@ -1,5 +1,5 @@
 apisix:
-  node_listen: 9080              # APISIX listening port
+  node_listen: 9080 # APISIX listening port
   enable_ipv6: false
 
 deployment:
@@ -7,23 +7,45 @@ deployment:
   role_data_plane:
     config_provider: yaml
   admin:
-    allow_admin:               # http://nginx.org/en/docs/http/ngx_http_access_module.html#allow
-      - 0.0.0.0/0              # We need to restrict ip access rules for security. 0.0.0.0/0 is for test.
+    allow_admin: # http://nginx.org/en/docs/http/ngx_http_access_module.html#allow
+      - 0.0.0.0/0 # We need to restrict ip access rules for security. 0.0.0.0/0 is for test.
 
     admin_key:
       - name: "admin"
         key: edd1c9f034335f136f87ad84b625c8f1
-        role: admin                 # admin: manage all configuration data
+        role: admin # admin: manage all configuration data
 
       - name: "viewer"
         key: 4054f7cf07e344346cd3f287985e76a2
         role: viewer
     admin_listen:
-      ip: 0.0.0.0                 # Specific IP, if not set, the default value is `0.0.0.0`.
-      port: 9180 
+      ip: 0.0.0.0 # Specific IP, if not set, the default value is `0.0.0.0`.
+      port: 9180
 
 plugin_attr:
   prometheus:
     export_addr:
       ip: "0.0.0.0"
       port: 9091
+
+plugins:
+  - grpc-transcode
+  - opentelemetry
+  - proxy-rewrite
+  - openid-connect
+
+opentelemetry:
+  resource:
+    service.name: APISIX
+    tenant.id: business_id
+  collector:
+    address: otel-collector:4318
+    request_timeout: 3
+    request_headers:
+      foo: bar
+  batch_span_processor:
+    drop_on_queue_full: false
+    max_queue_size: 6
+    batch_timeout: 2
+    inactive_timeout: 1
+    max_export_batch_size: 2
