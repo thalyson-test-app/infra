@@ -30,7 +30,7 @@ routes:
       grpc-transcode:
         proto_id: "1"
         service: users.UsersService
-        method: FindAll
+        method: FindOne
       opentelemetry:
         sampler:
           name: always_on
